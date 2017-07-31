@@ -2,15 +2,44 @@
 #include <cstring>
 #include <climits>
 #include <dirent.h>
+#include <windows.h>
 
 using namespace std;
 
+string songs[700];
+int i = 0;
+
 static int find_directory(const char*);
+string get_artist(string);
 
 int main()
 {
+	string command, last_artist = "", current_artist = "";
 	setlocale(LC_ALL, "Russian");
-	find_directory ("E:\\Music\\##\\");
+	find_directory ("./"); // prod mode
+	
+//	SetCurrentDirectory("E:\\Music\\carmusic\\"); // prod mode
+	
+	for (int j = 0; j < i; j++)
+	{
+		current_artist = get_artist(songs[j]);
+		if (current_artist != last_artist)
+		{
+			cout << songs[j] << endl;
+			last_artist = current_artist;
+			command = "mkdir \"" + current_artist + "\"";
+			system(command.c_str());
+			command = "move \"" + songs[j] + "\" \"" + current_artist + "\\" + songs[j] + "\"";
+			system(command.c_str());
+		}
+		else
+		{
+			cout << songs[j] << endl;
+			command = "move \"" + songs[j] + "\" \"" + current_artist + "\\" + songs[j] + "\"";
+			system(command.c_str());
+		}
+	}
+	
 	
 	cin.sync();
 	cin.get();
@@ -32,13 +61,10 @@ static int find_directory(const char *dirname)
 		*p++ = *src++;
 	}
 	*p = '\0';*/
-	
 	/* Open directory stream */
 	dir = opendir (dirname);
 	if (dir != NULL) {
 		struct dirent *ent;
-		
-		int i = 0;
 		
 		/* Print all files and directories within the directory */
 		while ((ent = readdir (dir)) != NULL) {
@@ -69,7 +95,8 @@ static int find_directory(const char *dirname)
 				case DT_LNK:
 				case DT_REG:
 					/* Output file name with directory */
-					printf ("%s\n", buffer);
+					songs[i] = buffer;
+					i++;
 					break;
 				
 				case DT_DIR:
@@ -84,7 +111,6 @@ static int find_directory(const char *dirname)
 					/* Ignore device entries */
 					/*NOP*/;
 			}
-			i++;
 		}
 		
 		closedir (dir);
@@ -97,4 +123,19 @@ static int find_directory(const char *dirname)
 	}
 	
 	return ok;
+}
+
+string get_artist(string file)
+{
+	string artist;
+	int k = 0;
+	
+	
+	while (k < file.length() && (file[k] != ' ' || file[k+1] != '-'))
+	{
+		artist += file[k];
+		k++;
+	}
+	
+	return artist;
 }
