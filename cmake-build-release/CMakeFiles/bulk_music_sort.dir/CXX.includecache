@@ -1,0 +1,20 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+F:/Desktop/bulk music sort/main.cpp
+iostream
+-
+cstring
+-
+climits
+-
+dirent.h
+-
+windows.h
+-
+
