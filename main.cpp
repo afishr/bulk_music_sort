@@ -11,14 +11,31 @@ int i = 0;
 
 static int find_directory(const char*);
 string get_artist(string);
+string get_OS();
 
-int main()
+
+int main(int argc, char* argv[])
 {
-	string command, last_artist = "", current_artist = "";
 	setlocale(LC_ALL, "Russian");
-	find_directory ("./"); // prod mode
 	
-//	SetCurrentDirectory("E:\\Music\\carmusic\\"); // prod mode
+	string command, last_artist = "", current_artist = "";
+	string create_command = "mkdir", move_command;
+	
+	if (argc > 1)
+	{
+		find_directory(argv[1]);
+		SetCurrentDirectory(argv[1]);
+	}
+	else
+		find_directory ("./");
+	
+	 // <- it's for dev
+	
+	if (get_OS() == "Windows")
+		move_command = "move";
+	else
+		move_command = "mv";
+	
 	
 	for (int j = 0; j < i; j++)
 	{
@@ -27,19 +44,20 @@ int main()
 		{
 			cout << songs[j] << endl;
 			last_artist = current_artist;
-			command = "mkdir \"" + current_artist + "\"";
+			command = create_command + " \"" + current_artist + "\"";
 			system(command.c_str());
-			command = "move \"" + songs[j] + "\" \"" + current_artist + "\\" + songs[j] + "\"";
+			command = move_command + " \"" + songs[j] + "\" \"" + current_artist + "\\" + songs[j] + "\"";
 			system(command.c_str());
 		}
 		else
 		{
 			cout << songs[j] << endl;
-			command = "move \"" + songs[j] + "\" \"" + current_artist + "\\" + songs[j] + "\"";
+			command = move_command + " \"" + songs[j] + "\" \"" + current_artist + "\\" + songs[j] + "\"";
 			system(command.c_str());
 		}
 	}
 	
+	cout << "Done";
 	
 	cin.sync();
 	cin.get();
@@ -138,4 +156,15 @@ string get_artist(string file)
 	}
 	
 	return artist;
+}
+
+string get_OS()
+{
+#ifdef _WIN32
+	return "Windows";
+#elif _WIN64
+	return "Windows";
+#else
+	return "Unix";
+#endif
 }
